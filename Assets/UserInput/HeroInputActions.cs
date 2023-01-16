@@ -41,6 +41,14 @@ public class @HeroInputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""66839cbf-5bd0-4d3d-9c7c-df5858957bf3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -153,6 +161,17 @@ public class @HeroInputActions : IInputActionCollection, IDisposable
                     ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""76f8a9ae-1130-47ac-99aa-1458ec30339a"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -164,6 +183,7 @@ public class @HeroInputActions : IInputActionCollection, IDisposable
         m_Hero_Movement = m_Hero.FindAction("Movement", throwIfNotFound: true);
         m_Hero_SySomthing = m_Hero.FindAction("SySomthing", throwIfNotFound: true);
         m_Hero_Interact = m_Hero.FindAction("Interact", throwIfNotFound: true);
+        m_Hero_Attack = m_Hero.FindAction("Attack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -216,6 +236,7 @@ public class @HeroInputActions : IInputActionCollection, IDisposable
     private readonly InputAction m_Hero_Movement;
     private readonly InputAction m_Hero_SySomthing;
     private readonly InputAction m_Hero_Interact;
+    private readonly InputAction m_Hero_Attack;
     public struct HeroActions
     {
         private @HeroInputActions m_Wrapper;
@@ -223,6 +244,7 @@ public class @HeroInputActions : IInputActionCollection, IDisposable
         public InputAction @Movement => m_Wrapper.m_Hero_Movement;
         public InputAction @SySomthing => m_Wrapper.m_Hero_SySomthing;
         public InputAction @Interact => m_Wrapper.m_Hero_Interact;
+        public InputAction @Attack => m_Wrapper.m_Hero_Attack;
         public InputActionMap Get() { return m_Wrapper.m_Hero; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -241,6 +263,9 @@ public class @HeroInputActions : IInputActionCollection, IDisposable
                 @Interact.started -= m_Wrapper.m_HeroActionsCallbackInterface.OnInteract;
                 @Interact.performed -= m_Wrapper.m_HeroActionsCallbackInterface.OnInteract;
                 @Interact.canceled -= m_Wrapper.m_HeroActionsCallbackInterface.OnInteract;
+                @Attack.started -= m_Wrapper.m_HeroActionsCallbackInterface.OnAttack;
+                @Attack.performed -= m_Wrapper.m_HeroActionsCallbackInterface.OnAttack;
+                @Attack.canceled -= m_Wrapper.m_HeroActionsCallbackInterface.OnAttack;
             }
             m_Wrapper.m_HeroActionsCallbackInterface = instance;
             if (instance != null)
@@ -254,6 +279,9 @@ public class @HeroInputActions : IInputActionCollection, IDisposable
                 @Interact.started += instance.OnInteract;
                 @Interact.performed += instance.OnInteract;
                 @Interact.canceled += instance.OnInteract;
+                @Attack.started += instance.OnAttack;
+                @Attack.performed += instance.OnAttack;
+                @Attack.canceled += instance.OnAttack;
             }
         }
     }
@@ -263,5 +291,6 @@ public class @HeroInputActions : IInputActionCollection, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnSySomthing(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
     }
 }

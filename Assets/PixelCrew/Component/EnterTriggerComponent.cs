@@ -10,14 +10,14 @@ namespace PixelCrew.Components
     {
 
         [SerializeField] private string _tag; //Тэг объекта с которым определяем взаимодействие
-        [SerializeField] private UnityEvent _action; //Ивент, запускаемый при столкновение
+        [SerializeField] private EnterEvent _action; //Ивент, запускаемый при столкновение
 
         //Определение столкновения
          private void OnTriggerEnter2D(Collider2D other)
          {
             if(other.gameObject.CompareTag(_tag))
             {
-                    _action?.Invoke();
+                    _action?.Invoke(other.gameObject);
             }
          }
     }

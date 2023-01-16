@@ -1,8 +1,9 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using PixelCrew.Components;
+using PixelCrew.Utils;
+using UnityEditor.Animations;
+
 
 
 
@@ -15,13 +16,25 @@ namespace PixelCrew
         [SerializeField] private float _speed; // Скорость
         [SerializeField] private float _jumpSpeed; //Сила прыжка
         [SerializeField] private float _damageSpeed; //Ускорение персонажа по Y при получение урона
+        [SerializeField] private int _damage;
         [SerializeField] private LayerCheck _groundCheck; //Ссылка на слой
         [SerializeField] private float _interactionRadius; //Радиус взаимодействия с объектами
         [SerializeField] private LayerMask _interactionLayer; //Ссылка на слой объектов для взаимодействия
+        [SerializeField] private LayerMask _groundLayer;
+        [SerializeField] private AnimatorController _armed;
+        [SerializeField] private AnimatorController _disarmed;
         [SerializeField] private ParticleSystem _hitParticle;
+        [SerializeField] private float _slamDawnVelocity;
+
+        [SerializeField] private CheckCircleOverlap _attackRange;
+
+        private bool _isArmed;
+        
 
         [SerializeField] private SpawnComponent _footStepParticles;
-        [SerializeField] private SpawnComponent _JumpDustParticles;
+        [SerializeField] private SpawnComponent _jumpDustParticles;
+        [SerializeField] private SpawnComponent _fallDust;
+        [SerializeField] private SpawnComponent _attackDust;
 
 
         private Collider2D[] _interactionResult = new Collider2D[1]; //Массив коллайдеров для взаимодействия
@@ -40,6 +53,7 @@ namespace PixelCrew
         private static readonly int IsRunning = Animator.StringToHash("is-running");
         private static readonly int IsFall = Animator.StringToHash("vertical-velocity");
         private static readonly int Hit = Animator.StringToHash("hit");
+        private static readonly int AttackKey = Animator.StringToHash("attack");
 
         //Инициализирование ссылок
         private void Awake() 
@@ -112,9 +126,11 @@ namespace PixelCrew
             if(_isGrounded)
             {
                 yVelocity += _jumpSpeed;
+                _jumpDustParticles.Spawn();
             } else if (_allowDoubleJump)
             {
                 yVelocity = _jumpSpeed;
+                _jumpDustParticles.Spawn();
                 _allowDoubleJump = false;
             }
             return yVelocity;
@@ -209,27 +225,53 @@ namespace PixelCrew
             }
         }
 
+        private void OnCollisionEnter2D(Collision2D other) 
+        {
+            if (other.gameObject.IsInLayer(_groundLayer))
+            {
+                var contact = other.contacts[0];
+                if(contact.relativeVelocity.y >= _slamDawnVelocity)
+                {
+                    _fallDust.Spawn();
+                }
+            }
+        }
+
+
         public void SpawnFootDust()
         {
             // FindObjectOfType<AnimationComponent>().SetClip("run");
             _footStepParticles.Spawn();
         }
 
-        public void SpawnJumpDust()
+
+        public void Attack()
         {
-            FindObjectOfType<AnimationComponent>().SetClip("jump");
-            _JumpDustParticles.Spawn();
+            if(!_isArmed) return;
+            _animator.SetTrigger(AttackKey);
+            _attackDust.Spawn();
 
         }
 
-        public void SpawnFallDust()
+        public void OnAttack()
         {
-            if(_flyingTime > 0.9f)
+            var gos = _attackRange.GetObjectsInRange();
+            foreach (var go in gos)
             {
-                    FindObjectOfType<AnimationComponent>().SetClip("fall");
-                    _JumpDustParticles.Spawn();
-                    Debug.Log("is FLying");
+                var hp = go.GetComponent<HealthComponent>();
+                if(hp != null && go.CompareTag("Enemy"))
+                {
+                    hp.ApplyDamage(_damage);
+                }
             }
+        }
+
+        public void ArmHero()
+        {
+            _isArmed = true;
+            _animator.runtimeAnimatorController = _armed;
+            
         }
     }
 }
+

@@ -153,30 +153,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - _name: fall
-    _sprites:
-    - {fileID: 21300000, guid: 816069f1f3b731e4f83706eb2c18fca6, type: 3}
-    - {fileID: 21300000, guid: 6d33d00219a49634b9581f8609beb19a, type: 3}
-    - {fileID: 21300000, guid: be79b99ad28db6b4d9c36f1273c37273, type: 3}
-    - {fileID: 21300000, guid: 0f290f44a42af144885df20aedfa7ba8, type: 3}
-    - {fileID: 21300000, guid: 75efa7eac88399f4391918036f5fb90c, type: 3}
-    _loop: 0
-    _allowNextClip: 0
-    _onComplete:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1394515834306437941}
-          m_TargetAssemblyTypeName: PixelCrew.Components.DestroyComponent, Assembly-CSharp
-          m_MethodName: DestroyObject
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
 --- !u!114 &1394515834306437941
 MonoBehaviour:
   m_ObjectHideFlags: 0

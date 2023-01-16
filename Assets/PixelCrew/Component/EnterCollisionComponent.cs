@@ -21,11 +21,11 @@ namespace PixelCrew.Components
             }
         }
         
+
+    }
         //Класс получающий ивенты
         [Serializable]
         public class EnterEvent : UnityEvent<GameObject>
         {
-
         }
-    }
 }
